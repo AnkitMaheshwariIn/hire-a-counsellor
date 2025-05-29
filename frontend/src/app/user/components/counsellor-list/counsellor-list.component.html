@@ -1,0 +1,208 @@
+<div class="counsellor-list-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Find a Counsellor</h1>
+    <p>Browse our certified counsellors and find the right match for your needs</p>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading counsellors...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadCounsellors()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="counsellor-content">
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Filters</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="filterForm">
+            <!-- Search -->
+            <div class="search-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Search by name or specialization</mat-label>
+                <input matInput type="text" [value]="searchTerm" (input)="onSearch($event)">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <!-- Topics Filter -->
+            <div class="filter-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Topics</mat-label>
+                <mat-select formControlName="topics" multiple [compareWith]="compareTopicObjects">
+                  <mat-option *ngFor="let topic of topics" [value]="topic._id">
+                    {{ topic.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Locations Filter -->
+            <div class="filter-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Locations</mat-label>
+                <mat-select formControlName="locations" multiple [compareWith]="compareLocationObjects">
+                  <mat-option *ngFor="let location of locations" [value]="location._id">
+                    {{ location.name }}, {{ location.city }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Sort By -->
+            <div class="filter-field">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Sort By</mat-label>
+                <mat-select formControlName="sortBy">
+                  <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+                    {{ option.viewValue }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Clear Filters -->
+            <div class="filter-actions">
+              <button mat-stroked-button color="primary" (click)="clearFilters()">
+                <mat-icon>clear</mat-icon>
+                Clear Filters
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section">
+      <!-- Results Count -->
+      <div class="results-header">
+        <h2>{{ filteredCounsellors.length }} Counsellors Found</h2>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="filteredCounsellors.length === 0" class="no-results">
+        <mat-icon>search_off</mat-icon>
+        <h3>No counsellors found</h3>
+        <p>Try adjusting your filters or search criteria</p>
+        <button mat-raised-button color="primary" (click)="clearFilters()">
+          Clear All Filters
+        </button>
+      </div>
+
+      <!-- Counsellor Cards -->
+      <div *ngIf="filteredCounsellors.length > 0" class="counsellor-cards">
+        <mat-card *ngFor="let counsellor of filteredCounsellors" class="counsellor-card">
+          <div class="card-content-wrapper">
+            <!-- Counsellor Header with Image and Basic Info -->
+            <div class="counsellor-header">
+              <div class="counsellor-avatar">
+                <div class="avatar-container">
+                  <mat-icon *ngIf="!counsellor.profileImage" class="avatar-icon">person</mat-icon>
+                  <img *ngIf="counsellor.profileImage" [src]="counsellor.profileImage" alt="{{ counsellor.name }}">
+                </div>
+                <div class="online-indicator" *ngIf="counsellor.isOnline"></div>
+              </div>
+              
+              <div class="counsellor-info">
+                <h3 class="counsellor-name">{{ counsellor.name }}</h3>
+                <p class="counsellor-specialization">{{ counsellor.specialization || 'General Counsellor' }}</p>
+                
+                <!-- Rating -->
+                <div class="rating-container">
+                  <div class="rating">
+                    <mat-icon class="star-icon" *ngFor="let star of [1,2,3,4,5]"
+                      [class.filled]="star <= (counsellor.rating || 0)">
+                      star
+                    </mat-icon>
+                  </div>
+                  <span class="rating-count" *ngIf="counsellor.reviewCount">
+                    ({{ counsellor.reviewCount }})
+                  </span>
+                </div>
+                
+                <div class="counsellor-badges">
+                  <span *ngIf="counsellor.experience" class="experience-badge">
+                    <mat-icon class="badge-icon">work</mat-icon>
+                    {{ counsellor.experience }}+ years
+                  </span>
+                  <span *ngIf="counsellor.sessionCount" class="session-badge">
+                    <mat-icon class="badge-icon">event_available</mat-icon>
+                    {{ counsellor.sessionCount }}+ sessions
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <mat-divider></mat-divider>
+            
+            <!-- Counsellor Details -->
+            <div class="counsellor-details">
+              <!-- Bio -->
+              <p class="counsellor-bio">
+                {{ counsellor.bio || 'No bio available' | slice:0:150 }}{{ (counsellor.bio && counsellor.bio.length > 150) ? '...' : '' }}
+              </p>
+
+              <!-- Topics -->
+              <div class="topics-container" *ngIf="counsellor.topics && counsellor.topics.length > 0">
+                <h4 class="section-title">Expertise</h4>
+                <mat-chip-set>
+                  <mat-chip *ngFor="let topic of counsellor.topics | slice:0:3" class="topic-chip">
+                    {{ topic.name || topic }}
+                  </mat-chip>
+                  <mat-chip *ngIf="counsellor.topics.length > 3" color="primary" class="more-chip">
+                    +{{ counsellor.topics.length - 3 }} more
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+              
+              <!-- Availability & Price -->
+              <div class="availability-price-container">
+                <div class="availability-container">
+                  <h4 class="section-title">Next Available</h4>
+                  <p class="availability">
+                    <mat-icon class="availability-icon">event_available</mat-icon>
+                    {{ counsellor.nextAvailable || 'Today' }}
+                  </p>
+                </div>
+                
+                <div class="price-container">
+                  <h4 class="section-title">Session Price</h4>
+                  <p class="price">
+                    <mat-icon class="price-icon">payments</mat-icon>
+                    ₹{{ counsellor.hourlyRate || 1000 }}/hour
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="counsellor-actions">
+              <button mat-stroked-button color="primary" (click)="viewCounsellorDetails(counsellor._id)">
+                <mat-icon>visibility</mat-icon>
+                View Profile
+              </button>
+              <button mat-raised-button color="primary" (click)="bookSession(counsellor._id)">
+                <mat-icon>event_available</mat-icon>
+                Book Session
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

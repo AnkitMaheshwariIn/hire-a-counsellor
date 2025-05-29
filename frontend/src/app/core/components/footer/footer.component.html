@@ -1,0 +1,42 @@
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3 class="footer-title">Hire a Counsellor</h3>
+        <p class="footer-description">Find and book qualified counsellors for your personal, educational, and mental health needs.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h4 class="footer-heading">Quick Links</h4>
+        <ul class="footer-links">
+          <li><a [routerLink]="['/']">Home</a></li>
+          <li><a [routerLink]="['/auth/login']">Login</a></li>
+          <li><a [routerLink]="['/auth/register']">Register</a></li>
+          <li><a [routerLink]="['/user/counsellors']">Find Counsellors</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4 class="footer-heading">For Counsellors</h4>
+        <ul class="footer-links">
+          <li><a [routerLink]="['/auth/register']">Join as Counsellor</a></li>
+          <li><a [routerLink]="['/counsellor']">Counsellor Dashboard</a></li>
+          <li><a [routerLink]="['/counsellor/availability']">Manage Availability</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h4 class="footer-heading">Contact Us</h4>
+        <div class="contact-info">
+          <p><mat-icon>email</mat-icon> support@hireacounsellor.com</p>
+          <p><mat-icon>phone</mat-icon> +91 9876543210</p>
+          <p><mat-icon>location_on</mat-icon> 123 Main Street, City, Country</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} Hire a Counsellor. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

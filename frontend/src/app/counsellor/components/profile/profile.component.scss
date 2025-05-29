@@ -1,0 +1,166 @@
+.profile-container {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    margin-bottom: 1.5rem;
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 500;
+    }
+  }
+
+  .success-message, .error-message {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+
+    button {
+      margin-left: auto;
+    }
+  }
+
+  .success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .error-message {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+  .loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1rem;
+
+    p {
+      color: rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  .profile-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .profile-picture-card {
+    height: fit-content;
+
+    .profile-picture-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+
+      .profile-picture {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f5f5f5;
+        border: 1px solid #e0e0e0;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .no-image {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+
+          mat-icon {
+            font-size: 80px;
+            width: 80px;
+            height: 80px;
+            color: rgba(0, 0, 0, 0.3);
+          }
+        }
+      }
+
+      .profile-picture-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .profile-form-card {
+    mat-card-content {
+      padding-top: 1rem;
+    }
+
+    .form-section {
+      margin-bottom: 2rem;
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.7);
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+      }
+
+      .form-row {
+        margin-bottom: 1rem;
+
+        mat-form-field {
+          width: 100%;
+        }
+      }
+
+      .address-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+
+        @media (max-width: 600px) {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2rem;
+
+      button {
+        min-width: 150px;
+      }
+    }
+  }
+}

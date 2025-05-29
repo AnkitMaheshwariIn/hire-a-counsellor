@@ -1,0 +1,87 @@
+<div class="sessions-container">
+  <div class="header">
+    <h1>My Sessions</h1>
+    <button mat-raised-button color="primary" (click)="refreshSessions()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Filter by Status</mat-label>
+          <mat-select [formControl]="statusFilter">
+            <mat-option value="all">All Sessions</mat-option>
+            <mat-option value="scheduled">Scheduled</mat-option>
+            <mat-option value="completed">Completed</mat-option>
+            <mat-option value="cancelled">Cancelled</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Search</mat-label>
+          <input matInput [formControl]="searchQuery" placeholder="Search by client name or topic">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Sort By</mat-label>
+          <mat-select [formControl]="sortOrder">
+            <mat-option value="newest">Newest First</mat-option>
+            <mat-option value="oldest">Oldest First</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading sessions...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- No Sessions Message -->
+  <div *ngIf="!loading && filteredSessions.length === 0" class="no-data">
+    <mat-icon>event_busy</mat-icon>
+    <p>No sessions found</p>
+    <span *ngIf="statusFilter.value !== 'all' || searchQuery.value">
+      Try changing your filters to see more results
+    </span>
+  </div>
+
+  <!-- Sessions List -->
+  <div class="sessions-list" *ngIf="!loading && filteredSessions.length > 0">
+    <mat-card class="session-card" *ngFor="let session of filteredSessions" (click)="viewSessionDetails(getSessionId(session))">
+      <div class="session-date">
+        <div class="date-day">{{ session.date | date:'dd' }}</div>
+        <div class="date-month">{{ session.date | date:'MMM' }}</div>
+      </div>
+      <div class="session-details">
+        <div class="session-client">{{ getUserName(session.user) }}</div>
+        <div class="session-time">{{ session.startTime }} - {{ session.endTime }}</div>
+        <div class="session-info">
+          <span class="session-mode">{{ session.mode }}</span>
+          <span *ngIf="session.topic" class="session-topic">{{ session.topic }}</span>
+        </div>
+      </div>
+      <div class="session-status">
+        <span [ngClass]="getStatusClass(session.status)">
+          {{ session.status | titlecase }}
+        </span>
+      </div>
+      <button mat-icon-button color="primary">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </mat-card>
+  </div>
+</div>

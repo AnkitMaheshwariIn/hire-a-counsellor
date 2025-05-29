@@ -1,0 +1,116 @@
+<div class="dashboard-container">
+  <div class="welcome-section" *ngIf="counsellor && !loading.profile">
+    <h1>Welcome, {{ counsellor.name }}</h1>
+    <p class="subtitle">Here's an overview of your counselling activity</p>
+  </div>
+
+  <div *ngIf="loading.profile" class="loading-indicator">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading profile...</p>
+  </div>
+
+  <div *ngIf="error.profile" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error.profile }}</span>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+      <mat-card class="action-card" (click)="navigateToProfile()">
+        <mat-icon>person</mat-icon>
+        <span>Update Profile</span>
+      </mat-card>
+      <mat-card class="action-card" (click)="navigateToAvailability()">
+        <mat-icon>schedule</mat-icon>
+        <span>Manage Availability</span>
+      </mat-card>
+      <mat-card class="action-card" (click)="navigateToSessions()">
+        <mat-icon>list</mat-icon>
+        <span>View All Sessions</span>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-section">
+    <h2>Your Statistics</h2>
+    
+    <div *ngIf="loading.stats" class="loading-indicator">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading statistics...</p>
+    </div>
+
+    <div *ngIf="error.stats" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ error.stats }}</span>
+    </div>
+
+    <div class="stats-grid" *ngIf="stats && !loading.stats">
+      <mat-card class="stat-card">
+        <div class="stat-value">{{ stats.totalSessions }}</div>
+        <div class="stat-label">Total Sessions</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <div class="stat-value">{{ stats.completedSessions }}</div>
+        <div class="stat-label">Completed</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <div class="stat-value">{{ stats.upcomingSessions }}</div>
+        <div class="stat-label">Upcoming</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <div class="stat-value">₹{{ stats.totalEarnings | number:'1.0-0' }}</div>
+        <div class="stat-label">Total Earnings</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <div class="stat-value">{{ stats.averageRating | number:'1.1-1' }}/5</div>
+        <div class="stat-label">Average Rating</div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Upcoming Sessions -->
+  <div class="upcoming-sessions-section">
+    <div class="section-header">
+      <h2>Upcoming Sessions</h2>
+      <button mat-button color="primary" (click)="navigateToSessions()">
+        View All
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+    
+    <div *ngIf="loading.sessions" class="loading-indicator">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading upcoming sessions...</p>
+    </div>
+
+    <div *ngIf="error.sessions" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ error.sessions }}</span>
+    </div>
+
+    <div *ngIf="upcomingSessions.length === 0 && !loading.sessions" class="no-data">
+      <mat-icon>event_busy</mat-icon>
+      <p>No upcoming sessions scheduled</p>
+    </div>
+
+    <div class="sessions-list" *ngIf="upcomingSessions.length > 0 && !loading.sessions">
+      <mat-card class="session-card" *ngFor="let session of upcomingSessions" (click)="navigateToSession(getSessionId(session))">
+        <div class="session-date">
+          <div class="date-day">{{ session.date | date:'dd' }}</div>
+          <div class="date-month">{{ session.date | date:'MMM' }}</div>
+        </div>
+        <div class="session-details">
+          <div class="session-user">{{ getUserName(session.user) }}</div>
+          <div class="session-time">{{ session.startTime }} - {{ session.endTime }}</div>
+          <div class="session-mode">{{ session.mode }}</div>
+        </div>
+        <button mat-icon-button color="primary">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+.session-detail-container {
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h1 {
+      margin: 0 0 0 1rem;
+    }
+  }
+
+  .loading-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    text-align: center;
+
+    mat-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .error-message, .success-message {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .error-message {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+
+  .success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  mat-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .session-info-grid, .user-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+
+      .label {
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.6);
+        margin-bottom: 0.25rem;
+      }
+
+      .value {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .status-scheduled {
+    color: #1976d2;
+    font-weight: 500;
+  }
+
+  .status-completed {
+    color: #2e7d32;
+    font-weight: 500;
+  }
+
+  .status-cancelled {
+    color: #c62828;
+    font-weight: 500;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+
+  .session-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+    }
+  }
+}

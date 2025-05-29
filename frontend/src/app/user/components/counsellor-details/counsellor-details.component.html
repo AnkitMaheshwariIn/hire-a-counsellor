@@ -1,0 +1,182 @@
+<div class="counsellor-details-container">
+  <!-- Back Button -->
+  <div class="back-navigation">
+    <button mat-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Counsellors
+    </button>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading counsellor details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadCounsellorDetails()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error && counsellor" class="counsellor-content">
+    <!-- Profile Section -->
+    <section class="profile-section">
+      <mat-card>
+        <mat-card-content>
+          <div class="profile-header">
+            <div class="profile-avatar">
+              <div class="avatar-container">
+                <mat-icon *ngIf="!counsellor.profileImage">person</mat-icon>
+                <img *ngIf="counsellor.profileImage" [src]="counsellor.profileImage" alt="{{ counsellor.name }}">
+              </div>
+            </div>
+            <div class="profile-info">
+              <h1 class="profile-name">{{ counsellor.name }}</h1>
+              <p class="profile-title">{{ counsellor.specialization || 'General Counsellor' }}</p>
+              
+              <!-- Rating -->
+              <div class="rating-container">
+                <div class="rating">
+                  <mat-icon class="star-icon" *ngFor="let star of [1,2,3,4,5]"
+                    [class.filled]="star <= (counsellor.rating || 0)">
+                    star
+                  </mat-icon>
+                </div>
+                <span class="rating-count" *ngIf="counsellor.reviewCount">
+                  ({{ counsellor.reviewCount }} reviews)
+                </span>
+              </div>
+              
+              <!-- Experience Badge -->
+              <div *ngIf="counsellor.experience" class="experience-badge">
+                {{ counsellor.experience }}+ years of experience
+              </div>
+            </div>
+          </div>
+          
+          <!-- Bio -->
+          <div class="profile-bio">
+            <h2>About</h2>
+            <p>{{ counsellor.bio || 'No bio available' }}</p>
+          </div>
+          
+          <!-- Topics -->
+          <div class="profile-topics" *ngIf="counsellor.topics && counsellor.topics.length > 0">
+            <h2>Specializes in</h2>
+            <mat-chip-set>
+              <mat-chip *ngFor="let topic of counsellor.topics">
+                {{ topic.name || topic }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          
+          <!-- Locations -->
+          <div class="profile-locations" *ngIf="counsellor.locations && counsellor.locations.length > 0">
+            <h2>Available Locations</h2>
+            <mat-chip-set>
+              <mat-chip *ngFor="let location of counsellor.locations">
+                {{ location.name || location }}, {{ location.city || '' }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          
+          <!-- Pricing -->
+          <div class="profile-pricing">
+            <h2>Session Pricing</h2>
+            <div class="pricing-cards">
+              <mat-card class="pricing-card">
+                <mat-card-header>
+                  <mat-card-title>Single Session</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="price">
+                    ₹{{ counsellor.packageRates?.oneSession || counsellor.hourlyRate || 1000 }}
+                  </div>
+                  <div class="price-description">per 1-hour session</div>
+                </mat-card-content>
+              </mat-card>
+              
+              <mat-card class="pricing-card">
+                <mat-card-header>
+                  <mat-card-title>5 Sessions</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="price">
+                    ₹{{ counsellor.packageRates?.fiveSession || (counsellor.hourlyRate ? counsellor.hourlyRate * 4.5 : 4500) }}
+                  </div>
+                  <div class="price-description">₹{{ (counsellor.packageRates?.fiveSession || (counsellor.hourlyRate ? counsellor.hourlyRate * 4.5 : 4500)) / 5 }} per session</div>
+                  <div class="price-savings">Save 10%</div>
+                </mat-card-content>
+              </mat-card>
+              
+              <mat-card class="pricing-card">
+                <mat-card-header>
+                  <mat-card-title>10 Sessions</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="price">
+                    ₹{{ counsellor.packageRates?.tenSession || (counsellor.hourlyRate ? counsellor.hourlyRate * 8 : 8000) }}
+                  </div>
+                  <div class="price-description">₹{{ (counsellor.packageRates?.tenSession || (counsellor.hourlyRate ? counsellor.hourlyRate * 8 : 8000)) / 10 }} per session</div>
+                  <div class="price-savings">Save 20%</div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+    
+    <!-- Booking Section -->
+    <section class="booking-section">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Book a Session</mat-card-title>
+          <mat-card-subtitle>Select a date and time that works for you</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- No Availability -->
+          <div *ngIf="availability.length === 0" class="no-availability">
+            <mat-icon>event_busy</mat-icon>
+            <p>No available slots found</p>
+            <p class="hint">Please check back later or contact us for assistance</p>
+          </div>
+          
+          <!-- Date Selection -->
+          <div *ngIf="availability.length > 0" class="date-selection">
+            <h3>Select a Date</h3>
+            <mat-calendar 
+              [selected]="selectedDate"
+              (selectedChange)="selectDate($event)"
+              [dateFilter]="isDateAvailable.bind(this)">
+            </mat-calendar>
+          </div>
+          
+          <!-- Time Slots -->
+          <div *ngIf="selectedDate && availableSlots.length > 0" class="time-slots">
+            <h3>Available Time Slots for {{ selectedDate | date:'fullDate' }}</h3>
+            <div class="slots-grid">
+              <button 
+                *ngFor="let slot of availableSlots" 
+                mat-stroked-button 
+                class="time-slot-button"
+                (click)="bookSession(slot)">
+                {{ formatTime(slot.startTime) }} - {{ formatTime(slot.endTime) }}
+              </button>
+            </div>
+          </div>
+          
+          <!-- No Slots Available -->
+          <div *ngIf="selectedDate && availableSlots.length === 0" class="no-slots">
+            <p>No available time slots for the selected date.</p>
+            <p>Please select another date or check back later.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,158 @@
+<div class="session-detail-container">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Session Details</h1>
+  </div>
+
+  <mat-card *ngIf="loading" class="loading-card">
+    <mat-card-content>
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading session details...</p>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    <mat-icon>check_circle</mat-icon>
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <ng-container *ngIf="session && !loading">
+    <mat-card class="session-info-card">
+      <mat-card-header>
+        <mat-card-title>Session Information</mat-card-title>
+        <mat-card-subtitle>
+          <span [ngClass]="{'status-scheduled': session.status === 'scheduled', 
+                           'status-completed': session.status === 'completed',
+                           'status-cancelled': session.status === 'cancelled'}">
+            {{ session.status | titlecase }}
+          </span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="session-info-grid">
+          <div class="info-item">
+            <span class="label">User:</span>
+            <span class="value">{{ getUserName(session.user) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Date:</span>
+            <span class="value">{{ session.date | date:'fullDate' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Time:</span>
+            <span class="value">{{ session.startTime }} - {{ session.endTime }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Duration:</span>
+            <span class="value">{{ session.duration }} minutes</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Mode:</span>
+            <span class="value">{{ session.mode }}</span>
+          </div>
+          <div class="info-item" *ngIf="session.location">
+            <span class="label">Location:</span>
+            <span class="value">{{ session.location }}</span>
+          </div>
+          <div class="info-item" *ngIf="session.meetingLink">
+            <span class="label">Meeting Link:</span>
+            <span class="value">
+              <a [href]="session.meetingLink" target="_blank">{{ session.meetingLink }}</a>
+            </span>
+          </div>
+          <div class="info-item" *ngIf="session.topic">
+            <span class="label">Topic:</span>
+            <span class="value">{{ session.topic }}</span>
+          </div>
+          <div class="info-item" *ngIf="session.package">
+            <span class="label">Package:</span>
+            <span class="value">{{ session.package.name }} ({{ session.package.sessions }} sessions)</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="user-info-card">
+      <mat-card-header>
+        <mat-card-title>User Information</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="user-info-grid">
+          <div class="info-item">
+            <span class="label">Name:</span>
+            <span class="value">{{ getUserName(session.user) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ getUserEmail(session.user) }}</span>
+          </div>
+          <div class="info-item" *ngIf="hasUserPhone(session.user)">
+            <span class="label">Phone:</span>
+            <span class="value">{{ getUserPhone(session.user) }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="session-notes-card">
+      <mat-card-header>
+        <mat-card-title>Session Notes</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="notesForm" (ngSubmit)="updateSessionNotes()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Session Notes</mat-label>
+            <textarea 
+              matInput 
+              formControlName="sessionNotes" 
+              rows="6"
+              placeholder="Enter your notes about this session"
+              [disabled]="session.status === 'cancelled'"
+            ></textarea>
+            <mat-error *ngIf="notesForm.get('sessionNotes')?.hasError('required')">
+              Session notes are required
+            </mat-error>
+          </mat-form-field>
+          <div class="form-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              type="submit"
+              [disabled]="notesForm.invalid || loading || session.status === 'cancelled'"
+            >
+              Save Notes
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="session-actions" *ngIf="session.status === 'scheduled'">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="completeSession()"
+        [disabled]="loading"
+      >
+        <mat-icon>check</mat-icon>
+        Mark as Completed
+      </button>
+      <button 
+        mat-raised-button 
+        color="warn" 
+        (click)="cancelSession()"
+        [disabled]="loading"
+      >
+        <mat-icon>cancel</mat-icon>
+        Cancel Session
+      </button>
+    </div>
+  </ng-container>
+</div>

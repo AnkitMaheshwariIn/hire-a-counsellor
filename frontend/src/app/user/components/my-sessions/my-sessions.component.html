@@ -1,0 +1,175 @@
+<div class="my-sessions-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>My Sessions</h1>
+    <p>View and manage your counselling sessions</p>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading your sessions...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadSessions()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error" class="sessions-content">
+    <!-- Tabs -->
+    <mat-card>
+      <mat-card-content>
+        <mat-tab-group [(selectedIndex)]="activeTab" animationDuration="300ms">
+          <!-- Upcoming Sessions Tab -->
+          <mat-tab label="Upcoming Sessions ({{ upcomingSessions.length }})">
+            <div class="tab-content">
+              <!-- No Sessions -->
+              <div *ngIf="upcomingSessions.length === 0" class="no-sessions">
+                <mat-icon>event_busy</mat-icon>
+                <h3>No upcoming sessions</h3>
+                <p>You don't have any upcoming counselling sessions scheduled</p>
+                <button mat-raised-button color="primary" (click)="bookNewSession()">
+                  Book a Session
+                </button>
+              </div>
+
+              <!-- Sessions List -->
+              <div *ngIf="upcomingSessions.length > 0" class="sessions-list">
+                <mat-card *ngFor="let session of upcomingSessions" class="session-card">
+                  <div class="session-grid">
+                    <!-- Date Column -->
+                    <div class="session-date">
+                      <div class="date-box">
+                        <div class="date-day">{{ session.date | date:'d' }}</div>
+                        <div class="date-month">{{ session.date | date:'MMM' }}</div>
+                        <div class="date-year">{{ session.date | date:'yyyy' }}</div>
+                      </div>
+                      <div class="date-time">
+                        {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }}
+                      </div>
+                    </div>
+
+                    <!-- Details Column -->
+                    <div class="session-details">
+                      <h3 class="counsellor-name">
+                        {{ getCounsellorName(session.counsellor) }}
+                      </h3>
+                      <p class="session-type">
+                        {{ getCounsellorSpecialization(session.counsellor) }} Session
+                      </p>
+                      <div class="session-status">
+                        <span class="status-badge" [ngClass]="getStatusClass(session.status)">
+                          {{ session.status | titlecase }}
+                        </span>
+                      </div>
+                      <div *ngIf="session.meetingLink" class="meeting-link">
+                        <a [href]="session.meetingLink" target="_blank" mat-stroked-button color="primary">
+                          <mat-icon>videocam</mat-icon>
+                          Join Meeting
+                        </a>
+                      </div>
+                    </div>
+
+                    <!-- Actions Column -->
+                    <div class="session-actions">
+                      <button mat-stroked-button color="primary" (click)="viewCounsellorProfile(getCounsellorId(session.counsellor))">
+                        View Counsellor
+                      </button>
+                      <button *ngIf="session.status !== 'cancelled'" mat-stroked-button color="warn" (click)="cancelSession(session._id)">
+                        Cancel Session
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Notes Section -->
+                  <div *ngIf="session.notes" class="session-notes">
+                    <h4>Session Notes:</h4>
+                    <p>{{ session.notes }}</p>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Past Sessions Tab -->
+          <mat-tab label="Past Sessions ({{ pastSessions.length }})">
+            <div class="tab-content">
+              <!-- No Sessions -->
+              <div *ngIf="pastSessions.length === 0" class="no-sessions">
+                <mat-icon>history</mat-icon>
+                <h3>No past sessions</h3>
+                <p>You don't have any past counselling sessions</p>
+                <button mat-raised-button color="primary" (click)="bookNewSession()">
+                  Book Your First Session
+                </button>
+              </div>
+
+              <!-- Sessions List -->
+              <div *ngIf="pastSessions.length > 0" class="sessions-list">
+                <mat-card *ngFor="let session of pastSessions" class="session-card past-session">
+                  <div class="session-grid">
+                    <!-- Date Column -->
+                    <div class="session-date">
+                      <div class="date-box">
+                        <div class="date-day">{{ session.date | date:'d' }}</div>
+                        <div class="date-month">{{ session.date | date:'MMM' }}</div>
+                        <div class="date-year">{{ session.date | date:'yyyy' }}</div>
+                      </div>
+                      <div class="date-time">
+                        {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }}
+                      </div>
+                    </div>
+
+                    <!-- Details Column -->
+                    <div class="session-details">
+                      <h3 class="counsellor-name">
+                        {{ getCounsellorName(session.counsellor) }}
+                      </h3>
+                      <p class="session-type">
+                        {{ getCounsellorSpecialization(session.counsellor) }} Session
+                      </p>
+                      <div class="session-status">
+                        <span class="status-badge" [ngClass]="getStatusClass(session.status)">
+                          {{ session.status | titlecase }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Actions Column -->
+                    <div class="session-actions">
+                      <button mat-stroked-button color="primary" (click)="viewCounsellorProfile(getCounsellorId(session.counsellor))">
+                        View Counsellor
+                      </button>
+                      <button *ngIf="session.status === 'completed' && !session.feedback" mat-stroked-button color="accent">
+                        Leave Feedback
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Notes Section -->
+                  <div *ngIf="session.notes" class="session-notes">
+                    <h4>Session Notes:</h4>
+                    <p>{{ session.notes }}</p>
+                  </div>
+                </mat-card>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Book New Session Button -->
+    <div class="book-new-session">
+      <button mat-raised-button color="primary" (click)="bookNewSession()">
+        <mat-icon>add</mat-icon>
+        Book New Session
+      </button>
+    </div>
+  </div>
+</div>

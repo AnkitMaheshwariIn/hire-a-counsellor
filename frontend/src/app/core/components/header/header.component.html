@@ -1,0 +1,206 @@
+<header class="app-header">
+  <mat-toolbar color="primary">
+    <div class="container header-container">
+      <!-- Logo and Title -->
+      <div class="logo-container">
+        <a [routerLink]="['/']" class="logo-link">
+          <mat-icon class="logo-icon">psychology</mat-icon>
+          <span class="logo-text">Hire a Counsellor</span>
+        </a>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <nav class="desktop-nav" *ngIf="(currentUser$ | async) as user">
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+          <mat-icon>account_circle</mat-icon>
+          <span>{{ user.name }}</span>
+          <mat-icon>arrow_drop_down</mat-icon>
+        </button>
+        
+        <mat-menu #userMenu="matMenu">
+          <ng-container [ngSwitch]="user.role">
+            <!-- Admin Menu Items -->
+            <ng-container *ngSwitchCase="'admin'">
+              <button mat-menu-item [routerLink]="['/admin']">
+                <mat-icon>dashboard</mat-icon>
+                <span>Admin Dashboard</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/admin/counsellors']">
+                <mat-icon>people</mat-icon>
+                <span>Manage Counsellors</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/admin/users']">
+                <mat-icon>person</mat-icon>
+                <span>Manage Users</span>
+              </button>
+            </ng-container>
+            
+            <!-- Counsellor Menu Items -->
+            <ng-container *ngSwitchCase="'counsellor'">
+              <button mat-menu-item [routerLink]="['/counsellor']">
+                <mat-icon>dashboard</mat-icon>
+                <span>Dashboard</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/counsellor/profile']">
+                <mat-icon>person</mat-icon>
+                <span>My Profile</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/counsellor/availability']">
+                <mat-icon>event_available</mat-icon>
+                <span>Set Availability</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/counsellor/sessions']">
+                <mat-icon>event</mat-icon>
+                <span>My Sessions</span>
+              </button>
+            </ng-container>
+            
+            <!-- User Menu Items -->
+            <ng-container *ngSwitchDefault>
+              <button mat-menu-item [routerLink]="['/user']">
+                <mat-icon>dashboard</mat-icon>
+                <span>Dashboard</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/user/counsellors']">
+                <mat-icon>people</mat-icon>
+                <span>Find Counsellors</span>
+              </button>
+              <button mat-menu-item [routerLink]="['/user/sessions']">
+                <mat-icon>event</mat-icon>
+                <span>My Sessions</span>
+              </button>
+            </ng-container>
+          </ng-container>
+          
+          <!-- Common Menu Items -->
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </nav>
+      
+      <!-- Login/Register Buttons for non-authenticated users -->
+      <nav class="desktop-nav" *ngIf="!(currentUser$ | async)">
+        <a mat-button [routerLink]="['/auth/login']" class="nav-button">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </a>
+        <a mat-raised-button color="accent" [routerLink]="['/auth/register']" class="nav-button">
+          <mat-icon>person_add</mat-icon>
+          <span>Register</span>
+        </a>
+      </nav>
+      
+      <!-- Mobile Menu Toggle -->
+      <button mat-icon-button class="mobile-menu-toggle" (click)="toggleMenu()">
+        <mat-icon>{{ isMenuOpen ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+  
+  <!-- Mobile Navigation Drawer -->
+  <div class="mobile-nav" [class.open]="isMenuOpen">
+    <div class="mobile-nav-content">
+      <ng-container *ngIf="(currentUser$ | async) as user; else loginRegister">
+        <div class="user-info">
+          <mat-icon class="user-avatar">account_circle</mat-icon>
+          <div class="user-details">
+            <h3>{{ user.name }}</h3>
+            <p>{{ user.email }}</p>
+          </div>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <!-- Admin Mobile Menu -->
+        <ng-container *ngIf="user.role === 'admin'">
+          <a mat-button class="mobile-nav-item" [routerLink]="['/admin']" (click)="closeMenu()">
+            <mat-icon>dashboard</mat-icon>
+            <span>Admin Dashboard</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/admin/counsellors']" (click)="closeMenu()">
+            <mat-icon>people</mat-icon>
+            <span>Manage Counsellors</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/admin/users']" (click)="closeMenu()">
+            <mat-icon>person</mat-icon>
+            <span>Manage Users</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/admin/topics']" (click)="closeMenu()">
+            <mat-icon>category</mat-icon>
+            <span>Manage Topics</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/admin/locations']" (click)="closeMenu()">
+            <mat-icon>location_on</mat-icon>
+            <span>Manage Locations</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/admin/sessions']" (click)="closeMenu()">
+            <mat-icon>event</mat-icon>
+            <span>Manage Sessions</span>
+          </a>
+        </ng-container>
+        
+        <!-- Counsellor Mobile Menu -->
+        <ng-container *ngIf="user.role === 'counsellor'">
+          <a mat-button class="mobile-nav-item" [routerLink]="['/counsellor']" (click)="closeMenu()">
+            <mat-icon>dashboard</mat-icon>
+            <span>Dashboard</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/counsellor/profile']" (click)="closeMenu()">
+            <mat-icon>person</mat-icon>
+            <span>My Profile</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/counsellor/availability']" (click)="closeMenu()">
+            <mat-icon>event_available</mat-icon>
+            <span>Set Availability</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/counsellor/sessions']" (click)="closeMenu()">
+            <mat-icon>event</mat-icon>
+            <span>My Sessions</span>
+          </a>
+        </ng-container>
+        
+        <!-- User Mobile Menu -->
+        <ng-container *ngIf="user.role === 'user'">
+          <a mat-button class="mobile-nav-item" [routerLink]="['/user']" (click)="closeMenu()">
+            <mat-icon>dashboard</mat-icon>
+            <span>Dashboard</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/user/counsellors']" (click)="closeMenu()">
+            <mat-icon>people</mat-icon>
+            <span>Find Counsellors</span>
+          </a>
+          <a mat-button class="mobile-nav-item" [routerLink]="['/user/sessions']" (click)="closeMenu()">
+            <mat-icon>event</mat-icon>
+            <span>My Sessions</span>
+          </a>
+        </ng-container>
+        
+        <mat-divider></mat-divider>
+        
+        <!-- Logout Button -->
+        <a mat-button class="mobile-nav-item logout" (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </a>
+      </ng-container>
+      
+      <!-- Login/Register Mobile Menu -->
+      <ng-template #loginRegister>
+        <a mat-button class="mobile-nav-item" [routerLink]="['/auth/login']" (click)="closeMenu()">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </a>
+        <a mat-button class="mobile-nav-item" [routerLink]="['/auth/register']" (click)="closeMenu()">
+          <mat-icon>person_add</mat-icon>
+          <span>Register</span>
+        </a>
+      </ng-template>
+    </div>
+  </div>
+  
+  <!-- Overlay for mobile menu -->
+  <div class="mobile-nav-overlay" [class.open]="isMenuOpen" (click)="closeMenu()"></div>
+</header>

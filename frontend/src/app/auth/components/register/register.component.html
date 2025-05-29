@@ -1,0 +1,45 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <mat-card-title>Create an Account</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="register-message">
+        <p>Create your account quickly and securely with Google</p>
+      </div>
+      
+      <div class="role-selection">
+        <mat-label>I want to register as:</mat-label>
+        <mat-radio-group [(ngModel)]="selectedRole" class="role-group">
+          <mat-radio-button value="user">User</mat-radio-button>
+          <mat-radio-button value="counsellor">Counsellor</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      
+      <div class="google-signup-container">
+        <button mat-raised-button class="google-signup-button" (click)="signUpWithGoogle()">
+          <img src="assets/images/google-logo.svg" alt="Google" class="google-logo">
+          <span>Sign up with Google</span>
+        </button>
+      </div>
+      
+      <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="30"></mat-spinner>
+        <p>Creating your account...</p>
+      </div>
+      
+      <div *ngIf="errorMessage" class="error-message">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <div class="login-link">
+        <span>Already have an account?</span>
+        <a [routerLink]="['/auth/login']" mat-button color="accent">Login</a>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

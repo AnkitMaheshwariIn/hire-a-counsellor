@@ -1,0 +1,163 @@
+<div class="book-session-container">
+  <!-- Back Button -->
+  <div class="back-navigation">
+    <button mat-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Counsellor
+    </button>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Book a Session</h1>
+    <p>Complete your booking details to schedule a counselling session</p>
+  </div>
+
+  <!-- Loading and Error States -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading booking details...</p>
+  </div>
+
+  <div *ngIf="error" class="error-container">
+    <mat-icon color="warn">error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      Go Back
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error && counsellor" class="booking-content">
+    <div class="booking-grid">
+      <!-- Booking Form -->
+      <div class="booking-form-section">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Session Details</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+              <!-- Session Info -->
+              <div class="session-info">
+                <h3>Your Session with {{ counsellor.name }}</h3>
+                <div class="info-row">
+                  <mat-icon>event</mat-icon>
+                  <span>{{ formatDate(sessionDate) }}</span>
+                </div>
+                <div class="info-row">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ formatTime(startTime) }} - {{ formatTime(endTime) }}</span>
+                </div>
+              </div>
+
+              <!-- Package Selection -->
+              <div class="form-field">
+                <h3>Select Package</h3>
+                <mat-radio-group formControlName="package" class="package-options">
+                  <mat-radio-button *ngFor="let option of packageOptions" [value]="option.value">
+                    {{ option.viewValue }}
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <!-- Notes -->
+              <div class="form-field">
+                <h3>Additional Notes</h3>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Any specific concerns or topics you'd like to discuss</mat-label>
+                  <textarea matInput formControlName="notes" rows="4"></textarea>
+                </mat-form-field>
+              </div>
+
+              <!-- Terms -->
+              <div class="form-field terms-field">
+                <mat-checkbox formControlName="agreeToTerms" color="primary">
+                  I agree to the <a href="#" target="_blank">terms and conditions</a>
+                </mat-checkbox>
+                <mat-error *ngIf="bookingForm.get('agreeToTerms')?.hasError('required') && bookingForm.get('agreeToTerms')?.touched">
+                  You must agree to the terms and conditions
+                </mat-error>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="form-actions">
+                <button type="button" mat-button (click)="cancel()">
+                  Cancel
+                </button>
+                <button type="submit" mat-raised-button color="primary" [disabled]="bookingForm.invalid || submitting">
+                  <mat-spinner *ngIf="submitting" diameter="20" class="spinner-button"></mat-spinner>
+                  <span *ngIf="!submitting">Book Now</span>
+                </button>
+              </div>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary-section">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Order Summary</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="summary-item">
+              <span class="item-label">Counsellor</span>
+              <span class="item-value">{{ counsellor.name }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Date</span>
+              <span class="item-value">{{ formatDate(sessionDate) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Time</span>
+              <span class="item-value">{{ formatTime(startTime) }} - {{ formatTime(endTime) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="item-label">Package</span>
+              <span class="item-value">
+                {{ getPackageViewValue(bookingForm.value.package) }}
+              </span>
+            </div>
+            <div class="divider"></div>
+            <div class="summary-item total">
+              <span class="item-label">Total</span>
+              <span class="item-value">₹{{ getSessionTotal() }}</span>
+            </div>
+
+            <div class="payment-info">
+              <mat-icon>info</mat-icon>
+              <p>Payment will be collected at the time of the session. We accept cash, UPI, and all major credit/debit cards.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Counsellor Card -->
+        <mat-card class="counsellor-card">
+          <mat-card-header>
+            <div mat-card-avatar class="counsellor-avatar">
+              <mat-icon *ngIf="!counsellor.profileImage">person</mat-icon>
+              <img *ngIf="counsellor.profileImage" [src]="counsellor.profileImage" alt="{{ counsellor.name }}">
+            </div>
+            <mat-card-title>{{ counsellor.name }}</mat-card-title>
+            <mat-card-subtitle>{{ counsellor.specialization || 'General Counsellor' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="rating-container">
+              <div class="rating">
+                <mat-icon class="star-icon" *ngFor="let star of [1,2,3,4,5]"
+                  [class.filled]="star <= (counsellor.rating || 0)">
+                  star
+                </mat-icon>
+              </div>
+              <span class="rating-count" *ngIf="counsellor.reviewCount">
+                ({{ counsellor.reviewCount }})
+              </span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
