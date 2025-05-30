@@ -3,6 +3,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .header-container {
@@ -11,6 +12,10 @@
   align-items: center;
   width: 100%;
   padding: 0 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 0.5rem;
+  }
 }
 
 .logo-container {
@@ -35,6 +40,10 @@
 .logo-text {
   font-size: 1.3rem;
   font-weight: 500;
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
 }
 
 .desktop-nav {
@@ -59,11 +68,15 @@
   }
 }
 
-.mobile-menu-toggle {
+.mobile-menu-button {
   display: none;
   
   @media (max-width: 768px) {
-    display: block;
+    display: flex;
+    margin-left: auto;
+    min-width: 36px;
+    padding: 0;
+    justify-content: center;
   }
 }
 
@@ -140,10 +153,10 @@
 
 .mobile-nav-overlay {
   position: fixed;
-  top: 64px;
+  top: 56px;
   left: 0;
   width: 100%;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 56px);
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   visibility: hidden;

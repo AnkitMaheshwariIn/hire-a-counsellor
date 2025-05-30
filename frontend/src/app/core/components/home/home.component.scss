@@ -5,6 +5,15 @@
   padding: 5rem 0;
   text-align: center;
   margin-top: -1.5rem; // To offset the container padding
+  
+  @media (max-width: 768px) {
+    padding: 3rem 0;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 2rem 0;
+    margin-top: -1rem;
+  }
 }
 
 .hero-content {
@@ -38,15 +47,21 @@
   justify-content: center;
   gap: 1rem;
   
-  @media (max-width: 576px) {
+  @media (max-width: 480px) {
     flex-direction: column;
     align-items: center;
+    gap: 0.75rem;
   }
 }
 
 .hero-button {
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
+  
+  @media (max-width: 480px) {
+    width: 100%;
+    max-width: 250px;
+  }
   
   mat-icon {
     margin-right: 0.5rem;
@@ -78,14 +93,35 @@
 }
 
 // How It Works Section
-.steps-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
+.how-it-works {
+  background-color: white;
+  padding: 4rem 0;
   
   @media (max-width: 768px) {
+    padding: 3rem 0;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 2rem 0;
+  }
+}
+
+.steps-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 3rem;
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  @media (max-width: 480px) {
     flex-direction: column;
     align-items: center;
+    gap: 2.5rem;
+    margin-top: 1.5rem;
   }
 }
 

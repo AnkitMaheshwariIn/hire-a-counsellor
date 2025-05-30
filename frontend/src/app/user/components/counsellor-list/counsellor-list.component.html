@@ -114,7 +114,7 @@
                   <mat-icon *ngIf="!counsellor.profileImage" class="avatar-icon">person</mat-icon>
                   <img *ngIf="counsellor.profileImage" [src]="counsellor.profileImage" alt="{{ counsellor.name }}">
                 </div>
-                <div class="online-indicator" *ngIf="counsellor.isOnline"></div>
+                <!-- Online indicator removed as isOnline property doesn't exist in the model -->
               </div>
               
               <div class="counsellor-info">
@@ -139,10 +139,7 @@
                     <mat-icon class="badge-icon">work</mat-icon>
                     {{ counsellor.experience }}+ years
                   </span>
-                  <span *ngIf="counsellor.sessionCount" class="session-badge">
-                    <mat-icon class="badge-icon">event_available</mat-icon>
-                    {{ counsellor.sessionCount }}+ sessions
-                  </span>
+                  <!-- Session count badge removed as sessionCount property doesn't exist in the model -->
                 </div>
               </div>
             </div>
@@ -175,7 +172,7 @@
                   <h4 class="section-title">Next Available</h4>
                   <p class="availability">
                     <mat-icon class="availability-icon">event_available</mat-icon>
-                    {{ counsellor.nextAvailable || 'Today' }}
+                    Today
                   </p>
                 </div>
                 

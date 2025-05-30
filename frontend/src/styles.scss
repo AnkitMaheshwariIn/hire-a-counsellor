@@ -20,20 +20,135 @@ $hire-counsellor-theme: mat.define-light-theme((
   density: 0,
 ));
 
-/* Include theme styles for core and each component used */
+/* Include the theme styles for Angular Material components */
 @include mat.all-component-themes($hire-counsellor-theme);
+
+/* Material Icons styling */
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+/* Mobile-first approach */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 /* Global styles */
 html, body {
   height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: #fafafa;
   color: rgba(0, 0, 0, 0.87);
   line-height: 1.5;
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+/* Container classes for responsive layouts */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Responsive grid system */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+}
+
+.col {
+  flex: 1;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Responsive columns */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+  
+  .col {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+/* Responsive spacing utilities */
+.p-responsive {
+  padding: 2rem;
+}
+
+.m-responsive {
+  margin: 2rem;
+}
+
+@media (max-width: 768px) {
+  .p-responsive {
+    padding: 1.5rem;
+  }
+  
+  .m-responsive {
+    margin: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .p-responsive {
+    padding: 1rem;
+  }
+  
+  .m-responsive {
+    margin: 1rem;
+  }
 }
 
 /* Container styles */
