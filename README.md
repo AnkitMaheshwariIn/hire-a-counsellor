@@ -153,6 +153,7 @@ The application is designed to be deployed on Windsurf:
 - Free email service (Nodemailer with Gmail)
 - No paid third-party APIs or plugins
 
-## License
+## 🔒 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is proprietary and confidential. Unauthorized use or distribution is strictly prohibited.  
+For licensing requests, contact **Ankit Maheshwari**.
